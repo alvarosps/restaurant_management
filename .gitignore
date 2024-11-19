@@ -1,0 +1,122 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Coverage and test reports
+coverage/
+*.lcov
+.nyc_output/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Lint and formatting cache
+.eslintcache
+.prettiercache
+
+# Build artifacts
+dist/
+build/
+.cache/
+server/build/
+server/dist/
+server/staticfiles/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Django specific
+server/db.sqlite3
+server/db.sqlite3-journal
+server/local_settings.py
+server/*.log
+server/static/
+server/media/
+
+# Python bytecode
+server/__pycache__/
+server/*.py[cod]
+server/*$py.class
+
+# Virtual environments
+server/env/
+server/.venv/
+server/ENV/
+server/env.bak/
+server/venv.bak/
+
+# Flask specific
+server/instance/
+server/.webassets-cache
+
+# Editor specific
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Environment files
+.env
+.env.*
+
+# Debug tool settings
+*.coverage
+nosetests.xml
+coverage.xml
+
+# Parcel bundler
+.cache/
+
+# React and frontend specific
+client/.next/
+client/.nuxt/
+client/.vuepress/dist
+client/.cache/
+client/.rpt2_cache/
+client/.rts2_cache_*/
+client/.fusebox/
+client/yarn.lock
+client/package-lock.json
+
+# Bower components
+bower_components/
+
+# Django migrations
+server/**/migrations/
+!server/**/migrations/__init__.py
+
+# Python eggs and builds
+*.egg-info/
+.eggs/
+*.egg
+
+# Django Prometheus metrics
+server/metrics.prom
