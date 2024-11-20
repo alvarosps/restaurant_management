@@ -5,6 +5,7 @@ import AdminPanel from '~pages/AdminPanel';
 import Home from '~pages/Home';
 import OrderCustomization from '~pages/OrderCustomization';
 import AdminUserList from './pages/AdminUserList';
+import OrderAudit from './pages/OrderAudit';
 
 const AppRoutes: React.FC = () => {
     const navigate = useNavigate();
@@ -23,6 +24,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/customize-order/:id" element={<OrderCustomization />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/admin/audits" element={<OrderAudit />} />
         </Routes>
     );
 };

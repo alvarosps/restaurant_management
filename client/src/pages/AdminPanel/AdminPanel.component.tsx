@@ -48,6 +48,11 @@ const AdminPanel: React.FC = () => {
     new Date(audit.changed_at).toLocaleString(),
   ]);
 
+  const handleExport = (format: string) => {
+    const url = `http://localhost:8000/api/reports/export-${format}/`;
+    window.open(url, '_blank'); // Abre o link em uma nova aba
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold text-center mb-6">Painel Administrativo</h1>
@@ -63,13 +68,13 @@ const AdminPanel: React.FC = () => {
 
       <div className="mb-6 flex flex-col sm:flex-row gap-4">
         <button
-          onClick={() => api.get('reports/export-csv/')}
+          onClick={() => handleExport('csv')}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Exportar CSV
         </button>
         <button
-          onClick={() => api.get('reports/export-pdf/')}
+          onClick={() => handleExport('pdf')}
           className="bg-red-500 text-white px-4 py-2 rounded"
         >
           Exportar PDF

@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const token = localStorage.getItem('token');
+  const tableNumber = localStorage.getItem('tableNumber');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,7 +31,12 @@ const Header: React.FC = () => {
           Restaurante
         </Link>
       </div>
-      <nav className="flex space-x-2">
+      <nav className="flex space-x-2 items-center">
+        {tableNumber && (
+          <div className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium">
+            Mesa {tableNumber}
+          </div>
+        )}
         <Link to="/" className="hover:underline">
           Home
         </Link>

@@ -1,7 +1,7 @@
 from django.urls import path
 from menu.views.menu_views import MenuItemListCreateView, MenuItemDetailView
 from menu.views.order_views import OrderListCreateView, CancelOrderView, UserOrderHistoryView, RefundOrderView
-from menu.views.report_views import ReportView, ReportAnalysisView, ExportReportView
+from menu.views.report_views import ReportView, ReportAnalysisView, ExportReportView, ExportReportPDFView
 from menu.views.payment_views import CreatePaymentSessionView
 from menu.views.stock_views import UpdateStockView
 
@@ -17,4 +17,5 @@ urlpatterns = [
     path('orders/history/', UserOrderHistoryView.as_view(), name='user-order-history'),
     path('orders/<int:pk>/refund/', RefundOrderView.as_view(), name='refund-order'),
     path('reports/export-csv/', ExportReportView.as_view(), name='export-report-csv'),
+    path('reports/export-pdf/', ExportReportPDFView.as_view(), name='export-report-pdf'),
 ]
