@@ -31,7 +31,7 @@ STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 
 # Define ALLOWED_HOSTS dinamicamente
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] if DEBUG else []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost'] if DEBUG else ['*']
 
 # Application definition
 
@@ -43,12 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'menu',
     'corsheaders',
     'django_prometheus',
+    'django_filters',
     'users',
     'admin_panel',
-    'django_filters',
+    'menu',
 ]
 
 MIDDLEWARE = [
