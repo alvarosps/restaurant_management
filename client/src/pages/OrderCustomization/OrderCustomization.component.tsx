@@ -10,7 +10,15 @@ const OrderCustomization: React.FC = () => {
   const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [notes, setNotes] = useState<string>('');
-  const [modal, setModal] = useState({ isVisible: false, title: '', message: '' });
+  const [modal, setModal] = useState({
+    isVisible: false,
+    title: '',
+    message: '',
+    action: null as (() => void) | null, // Adicionado para ações no modal
+  });
+
+  const tableNumber = localStorage.getItem('tableNumber'); // Verifica se há uma mesa definida
+  const token = localStorage.getItem('token'); // Verifica se o usuário está autenticado
 
   useEffect(() => {
     const fetchMenuItem = async () => {
@@ -27,16 +35,32 @@ const OrderCustomization: React.FC = () => {
   }, [id, navigate]);
 
   const handleOrder = async () => {
+    if (!token && tableNumber) {
+      // Se não estiver logado mas tiver mesa, pergunta se quer logar
+      setModal({
+        isVisible: true,
+        title: 'Login Opcional',
+        message: 'Deseja fazer login para associar o pedido ao seu perfil?',
+        action: handleOptionalLogin,
+      });
+      return;
+    }
+
     try {
       await api.post('orders/', {
         menu_item: menuItem?.id,
         quantity,
         notes,
+        table_number: tableNumber, // Inclui o número da mesa no pedido
       });
-      setModal({ isVisible: true, title: 'Sucesso', message: 'Pedido realizado com sucesso!' });
+      setModal({ isVisible: true, title: 'Sucesso', message: 'Pedido realizado com sucesso!', action: null });
     } catch (error) {
-      setModal({ isVisible: true, title: 'Erro', message: 'Erro ao realizar o pedido.' });
+      setModal({ isVisible: true, title: 'Erro', message: 'Erro ao realizar o pedido.', action: null });
     }
+  };
+
+  const handleOptionalLogin = () => {
+    navigate('/login'); // Redireciona para a página de login
   };
 
   if (!menuItem) return <p>Carregando...</p>;
@@ -84,7 +108,22 @@ const OrderCustomization: React.FC = () => {
         message={modal.message}
         isVisible={modal.isVisible}
         onClose={() => setModal({ ...modal, isVisible: false })}
-      />
+      >
+        {modal.action && (
+          <button
+            onClick={modal.action}
+            className="w-full bg-green-500 text-white px-4 py-2 rounded mt-2"
+          >
+            Fazer Login
+          </button>
+        )}
+        <button
+          onClick={() => setModal({ ...modal, isVisible: false })}
+          className="w-full bg-gray-300 text-black px-4 py-2 rounded mt-2"
+        >
+          Continuar sem Login
+        </button>
+      </Modal>
     </div>
   );
 };

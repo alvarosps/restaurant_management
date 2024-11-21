@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// Verifica qual é o ambiente atual
+const CURRENT_ENV = import.meta.env.VITE_CURRENT_ENV || 'local';
+
+// Define a baseURL dependendo do ambiente
+const baseURL =
+  CURRENT_ENV === 'prod'
+    ? 'https://restaurant-management-xd6i.onrender.com/api/'
+    : 'http://localhost:8000/api/';
+
+// Cria a instância do Axios com a baseURL dinâmica
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: baseURL,
 });
 
 // Intercepts requests to add the Authorization token

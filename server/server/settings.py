@@ -70,6 +70,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    config('FRONTEND_URL'),
 ]
 
 REST_FRAMEWORK = {

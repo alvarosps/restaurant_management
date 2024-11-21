@@ -59,6 +59,12 @@ const Login: React.FC = () => {
         >
           Voltar ao Menu
         </button>
+        <button
+          onClick={() => navigate('/user-create')}
+          className="w-full mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Criar Conta
+        </button>
       </div>
       <Modal
         title={modal.title}

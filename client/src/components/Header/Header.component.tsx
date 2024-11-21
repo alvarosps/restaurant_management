@@ -33,31 +33,34 @@ const Header: React.FC = () => {
       </div>
       <nav className="flex space-x-2 items-center">
         {tableNumber && (
-          <div className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium">
+            <div className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium">
             Mesa {tableNumber}
-          </div>
+            </div>
         )}
         <Link to="/" className="hover:underline">
-          Home
+            Cardápio
         </Link>
         <Link to="/order-history" className="hover:underline">
-          Histórico
+            Histórico
         </Link>
         {token ? (
-          <>
+            <>
             <Link to="/admin" className="hover:underline">
-              Admin Panel
+                Admin Panel
+            </Link>
+            <Link to="/user-create" className="hover:underline">
+                Criar Usuário
             </Link>
             <button onClick={handleLogout} className="hover:underline">
-              Logout
+                Logout
             </button>
-          </>
+            </>
         ) : (
-          <Link to="/login" className="hover:underline">
+            <Link to="/login" className="hover:underline">
             Login
-          </Link>
+            </Link>
         )}
-      </nav>
+        </nav>
     </header>
   );
 };
