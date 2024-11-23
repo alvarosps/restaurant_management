@@ -2,6 +2,7 @@ import axios from 'axios';
 
 // Verifica qual é o ambiente atual
 const CURRENT_ENV = import.meta.env.VITE_CURRENT_ENV || 'local';
+console.log('CURENT_ENV: ', CURRENT_ENV)
 
 // Define a baseURL dependendo do ambiente
 const baseURL =

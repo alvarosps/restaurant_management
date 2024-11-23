@@ -11,7 +11,7 @@ const OrderAudit: React.FC = () => {
   useEffect(() => {
     const fetchAudits = async () => {
       try {
-        const response = await api.get<OrderAuditType[]>('orders/audits/');
+        const response = await api.get<OrderAuditType[]>('menu/orders/audits/');
         setAudits(response.data);
       } catch (error) {
         setModal({ isVisible: true, title: 'Erro', message: 'Erro ao carregar auditorias.' });

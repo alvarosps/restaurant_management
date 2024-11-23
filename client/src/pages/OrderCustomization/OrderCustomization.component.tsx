@@ -14,16 +14,16 @@ const OrderCustomization: React.FC = () => {
     isVisible: false,
     title: '',
     message: '',
-    action: null as (() => void) | null, // Adicionado para ações no modal
+    action: null as (() => void) | null,
   });
 
-  const tableNumber = localStorage.getItem('tableNumber'); // Verifica se há uma mesa definida
-  const token = localStorage.getItem('token'); // Verifica se o usuário está autenticado
+  const tableNumber = localStorage.getItem('tableNumber');
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchMenuItem = async () => {
       try {
-        const response = await api.get<MenuItem>(`menu-items/${id}/`);
+        const response = await api.get<MenuItem>(`menu/items/${id}/`);
         setMenuItem(response.data);
       } catch (error) {
         console.error('Erro ao buscar item do cardápio:', error);
@@ -36,7 +36,6 @@ const OrderCustomization: React.FC = () => {
 
   const handleOrder = async () => {
     if (!token && tableNumber) {
-      // Se não estiver logado mas tiver mesa, pergunta se quer logar
       setModal({
         isVisible: true,
         title: 'Login Opcional',
@@ -47,11 +46,11 @@ const OrderCustomization: React.FC = () => {
     }
 
     try {
-      await api.post('orders/', {
+      await api.post('menu/orders/', {
         menu_item: menuItem?.id,
         quantity,
         notes,
-        table_number: tableNumber, // Inclui o número da mesa no pedido
+        table_number: tableNumber,
       });
       setModal({ isVisible: true, title: 'Sucesso', message: 'Pedido realizado com sucesso!', action: null });
     } catch (error) {
@@ -60,7 +59,7 @@ const OrderCustomization: React.FC = () => {
   };
 
   const handleOptionalLogin = () => {
-    navigate('/login'); // Redireciona para a página de login
+    navigate('/login');
   };
 
   if (!menuItem) return <p>Carregando...</p>;

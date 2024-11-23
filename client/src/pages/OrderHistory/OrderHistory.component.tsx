@@ -12,7 +12,7 @@ const OrderHistory: React.FC = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await api.get<Order[]>('orders/history/', {
+      const response = await api.get<Order[]>('menu/orders/history/', {
         params: { status: statusFilter, start_date: startDate, end_date: endDate },
       });
       setOrders(response.data);

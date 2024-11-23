@@ -1,31 +1,52 @@
-# Base React TypeScript Project
+# Frontend - Restaurant Management System
 
-This is a base project template for a React and TypeScript application, with the latest versions of React, TypeScript, Webpack, Babel, ESLint, and Prettier. Created by @alvarosps
+Este é o frontend do sistema de gerenciamento de restaurantes. Ele é desenvolvido com React, TypeScript e TailwindCSS.
 
-## Getting Started
+## **Pré-requisitos**
+- Node.js (v18 ou superior)
+- npm (para gerenciamento de pacotes)
 
-To get started with the project, follow these steps:
+---
 
-1. Install the dependencies:
-`npm install`
+## **Instalação**
 
-2. Start the development server:
-`npm start`
+1. Navegue até a pasta `client`:
+   ```bash
+   cd client
+   ```
 
-### Testing
-`npm run test`
+2. Instale as dependências
+    ```bash
+    npm install
+    ```
 
-### ESLint checks and ESLint Fixes
-- `npm run lint`
-- `npm run lint:fix`
+3. Configure o ambiente:
+    - Crie um arquivo `.env` na pasta `client` com o seguinte conteúdo (ajuste conforme necessário):
+    VITE_CURRENT_ENV=local
 
-### Prettier checks and Prettier Fixes
-- `npm run prettier`
-- `npm run prettier:fix`
+4. Inicie o servidor de desenvolvimento
+    ```bash
+    npm run dev
+    ```
 
-## Deployment
+5. Acesso o aplicativo:
+    - O Frontend estará disponível em http://localhost:3000
 
-- This will be specific to the project and where it is being deployed.
-- For now, we have a build script, and a webpack suited for production.
-- Might need to add more scripts and files for deployment and hot-reloading in deployment (depends on the platform)
-`npm run build`
+##**Scripts Disponíveis**
+- `npm run dev`: Inicia o ambiente de desenvolvimento.
+- `npm run build`: Compila o aplicativo para produção.
+- `npm run lint`: Executa o ESLint para verificar problemas de lint.
+- `npm run lint:fix`: Corrige automaticamente os problemas detectados pelo ESLint.
+- `npm run test`: Executa os testes configurados com Jest.
+
+##**Estrutura do Projeto**
+- **src/**: Contém o código-fonte principal do frontend.
+- **components/**: Componentes reutilizáveis como botões e gráficos.
+- **pages/**: Páginas específicas da aplicação.
+- **services/**: Gerenciamento de chamadas API.
+
+##**Testes**
+- Execute os testes com:
+    ```bash
+    npm run test
+    ```

@@ -4,14 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '~components/Modal';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modal, setModal] = useState({ isVisible: false, title: '', message: '' });
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
     try {
-      const response = await api.post('token/', { username, password });
+      const response = await api.post('token/', { email, password });
       localStorage.setItem('token', response.data.access);
       localStorage.setItem('refreshToken', response.data.refresh);
       navigate('/');
@@ -28,13 +29,16 @@ const Login: React.FC = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <h1 className="text-2xl font-bold mb-6">Login</h1>
-      <div className="w-full max-w-sm bg-white p-6 rounded shadow-md">
+      <form
+        onSubmit={handleLogin}
+        className="w-full max-w-sm bg-white p-6 rounded shadow-md"
+      >
         <label className="block mb-2">
-          Usuário:
+          Email:
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border rounded mt-1"
           />
         </label>
@@ -48,24 +52,24 @@ const Login: React.FC = () => {
           />
         </label>
         <button
-          onClick={handleLogin}
+          type="submit"
           className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Entrar
         </button>
-        <button
-          onClick={() => navigate('/')}
-          className="w-full mt-2 bg-gray-200 text-blue-600 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          Voltar ao Menu
-        </button>
-        <button
-          onClick={() => navigate('/user-create')}
-          className="w-full mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Criar Conta
-        </button>
-      </div>
+      </form>
+      <button
+        onClick={() => navigate('/')}
+        className="w-full mt-2 bg-gray-200 text-blue-600 px-4 py-2 rounded hover:bg-gray-300"
+      >
+        Voltar ao Menu
+      </button>
+      <button
+        onClick={() => navigate('/user-create')}
+        className="w-full mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Criar Conta
+      </button>
       <Modal
         title={modal.title}
         message={modal.message}

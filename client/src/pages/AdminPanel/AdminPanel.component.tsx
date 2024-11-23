@@ -15,9 +15,9 @@ const AdminPanel: React.FC = () => {
     const fetchData = async () => {
       try {
         const [reportsResponse, menuItemsResponse, auditsResponse] = await Promise.all([
-          api.get<ReportItem[]>('reports/'),
-          api.get<MenuItem[]>('menu-items/'),
-          api.get('orders/audits/'),
+          api.get<ReportItem[]>('menu/reports/'),
+          api.get<MenuItem[]>('menu/items/'),
+          api.get('menu/orders/audits/'),
         ]);
         setReportData(reportsResponse.data);
         setMenuItems(menuItemsResponse.data);
@@ -33,7 +33,7 @@ const AdminPanel: React.FC = () => {
 
   const updateStock = async (itemId: number, stock: number) => {
     try {
-      await api.patch(`menu-items/${itemId}/update-stock/`, { stock });
+      await api.patch(`menu/items/${itemId}/update-stock/`, { stock });
       setModal({ isVisible: true, title: 'Sucesso', message: 'Estoque atualizado com sucesso!' });
       setMenuItems(menuItems.map(item => (item.id === itemId ? { ...item, stock } : item)));
     } catch (error) {
@@ -49,7 +49,7 @@ const AdminPanel: React.FC = () => {
   ]);
 
   const handleExport = (format: string) => {
-    const url = `http://localhost:8000/api/reports/export-${format}/`;
+    const url = `http://localhost:8000/api/menu/reports/export-${format}/`;
     window.open(url, '_blank'); // Abre o link em uma nova aba
   };
 

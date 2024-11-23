@@ -12,3 +12,4 @@ class MenuItemListCreateView(ListCreateAPIView):
 class MenuItemDetailView(RetrieveAPIView):
     queryset = MenuItem.objects.all()
     serializer_class = MenuItemSerializer
+ 

@@ -24,7 +24,7 @@ api_patterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Login e token
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Atualização do token
     path('users/', include('users.urls')),  # Rotas relacionadas a usuários
-    path('api/admin-panel/', include('admin_panel.urls')),
+    path('admin-panel/', include('admin_panel.urls')),
 ]
 
 # Rotas de documentação

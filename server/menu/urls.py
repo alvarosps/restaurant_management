@@ -6,9 +6,9 @@ from menu.views.payment_views import CreatePaymentSessionView
 from menu.views.stock_views import UpdateStockView
 
 urlpatterns = [
-    path('menu-items/', MenuItemListCreateView.as_view(), name='menu-items'),
-    path('menu-items/<int:pk>/', MenuItemDetailView.as_view(), name='menu-item-detail'),
-    path('menu-items/<int:pk>/update-stock/', UpdateStockView.as_view(), name='update-stock'),
+    path('items/', MenuItemListCreateView.as_view(), name='menu-items'),
+    path('items/<int:pk>/', MenuItemDetailView.as_view(), name='menu-item-detail'),
+    path('items/<int:pk>/update-stock/', UpdateStockView.as_view(), name='update-stock'),
     path('orders/', OrderListCreateView.as_view(), name='orders'),
     path('reports/', ReportView.as_view(), name='reports'),
     path('report-analysis/', ReportAnalysisView.as_view(), name='report-analysis'),

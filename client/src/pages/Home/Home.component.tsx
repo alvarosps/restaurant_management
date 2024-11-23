@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const response = await api.get<MenuItem[]>('menu-items/');
+        const response = await api.get<MenuItem[]>('menu/items/');
         setMenuItems(response.data);
       } catch (error) {
         console.error('Erro ao buscar itens do cardápio:', error);
