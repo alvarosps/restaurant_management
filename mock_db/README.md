@@ -11,16 +11,18 @@ O banco de dados inclui:
   - Logs de auditoria para rastrear alterações no status dos pedidos.
 
 ## Como Usar
+    - Em primeiro uso, certifique-se que o banco de dados está criado:
+```bash
+set PGCLIENTENCODING=UTF8
+psql -U <seu-usuario>
+DROP DATABASE restaurant_db;
+CREATE DATABASE restaurant_db ENCODING 'UTF8' TEMPLATE template0;
+exit
+```
     - Execute os scripts no PostgreSQL:
-        ```bash
-        psql -U <seu-usuario> -d <seu-banco-de-dados> -f create_tables.sql
-        psql -U <seu-usuario> -d <seu-banco-de-dados> -f insert_mock_data.sql
-        ```
-
-- Se for necessário resetar o banco de dados:
-    ```bash
-    psql -U <seu-usuario> -d <seu-banco-de-dados> -f reset_db.sql
-    ```
+```bash
+psql -U <seu-usuario> -d <seu-banco-de-dados> -f insert_mock_data.sql
+```
 
 ## Observações
     - Certifique-se de que o PostgreSQL está instalado e em execução no seu sistema. Caso não esteja rodando, no windows você deve abrir "Serviços" e iniciar o serviço do postgresql.
