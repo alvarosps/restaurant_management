@@ -16,7 +16,6 @@ const MyOrders: React.FC = () => {
       const response = await api.get<Order[]>(endpoint);
       setOrders(response.data);
 
-      // Calcula o total da mesa
       const totalValue = response.data.reduce((sum, order) => sum + order.quantity * order.menu_item_price, 0);
       setTotal(totalValue);
     } catch (error) {

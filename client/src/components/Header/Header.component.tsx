@@ -14,7 +14,6 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch user role (admin or normal user)
   useEffect(() => {
     if (token) {
       api.get('users/me/').then((response) => {
@@ -67,7 +66,7 @@ const Header: React.FC = () => {
         </Link>
       </div>
       <nav className="flex space-x-2 items-center">
-        {tableNumber && (
+        {tableNumber && !isAdmin && (
           <div
             onClick={handleTableClick}
             className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium cursor-pointer hover:bg-gray-200"

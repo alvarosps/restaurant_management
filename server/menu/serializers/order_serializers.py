@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from menu.models.order import Order
+from menu.models.order_audit import OrderAudit
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,7 +15,7 @@ class UserOrderHistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['menu_item_name', 'quantity', 'status', 'created_at', 'table_number']
+        fields = ['id', 'menu_item_name', 'quantity', 'status', 'created_at', 'table_number']
         
 class TableOrderSerializer(serializers.ModelSerializer):
     menu_item_name = serializers.CharField(source='menu_item.name', read_only=True)
@@ -31,3 +32,8 @@ class TableOrderSerializer(serializers.ModelSerializer):
             'status',
             'created_at',
         ]
+
+class OrderAuditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderAudit
+        fields = ['id', 'order', 'status', 'changed_at']

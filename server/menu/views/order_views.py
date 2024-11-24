@@ -1,14 +1,14 @@
 import stripe
 from django.conf import settings
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from rest_framework import status, serializers
 from menu.models.order import Order
 from menu.models.order_audit import OrderAudit
-from menu.serializers.order_serializers import OrderSerializer, UserOrderHistorySerializer, TableOrderSerializer
+from menu.serializers.order_serializers import OrderSerializer, UserOrderHistorySerializer, TableOrderSerializer, OrderAuditSerializer
 from menu.metrics import cancel_counter
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -66,7 +66,7 @@ class CancelOrderView(APIView):
 
             OrderAudit.objects.create(order=order, status='Cancelled')
 
-            cancel_counter.inc()  # Incrementa o contador de cancelamentos
+            cancel_counter.inc()
             return Response({'status': 'Order cancelled'}, status=status.HTTP_200_OK)
         except Order.DoesNotExist:
             return Response({'error': 'Order not found or cannot be cancelled'}, status=status.HTTP_404_NOT_FOUND)
@@ -75,9 +75,9 @@ class UserOrderHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        if request.user.is_staff:  # Admin users
+        if request.user.is_staff:
             orders = Order.objects.all()
-        else:  # Regular users
+        else:
             orders = Order.objects.filter(user=request.user)
         serializer = UserOrderHistorySerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -89,14 +89,13 @@ class RefundOrderView(APIView):
             if not order.payment_id:
                 return Response({'error': 'No payment ID associated with this order'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Integração com Stripe para reembolsar
             stripe.Refund.create(
-                charge=order.payment_id  # Certifique-se de armazenar o ID do pagamento no pedido
+                charge=order.payment_id
             )
             order.status = 'Refunded'
             order.save()
 
-            OrderAudit.objects.create(order=order, status='Refunded')  # Registrar auditoria
+            OrderAudit.objects.create(order=order, status='Refunded')
             return Response({'status': 'Order refunded'}, status=status.HTTP_200_OK)
         except Order.DoesNotExist:
             return Response({'error': 'Order not found or cannot be refunded'}, status=status.HTTP_404_NOT_FOUND)
@@ -110,3 +109,8 @@ class TableOrderView(APIView):
             return Response({'message': 'No orders found for this table number'}, status=status.HTTP_404_NOT_FOUND)
         serializer = TableOrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class OrderAuditListView(ListAPIView):
+    queryset = OrderAudit.objects.all()
+    serializer_class = OrderAuditSerializer
+    permission_classes = [IsAdminUser]

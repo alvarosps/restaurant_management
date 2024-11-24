@@ -36,7 +36,7 @@ class UserDetailView(RetrieveAPIView):
 
 
     def get_queryset(self):
-        if self.request.user.is_staff:  # Admin pode acessar todos os usuários
+        if self.request.user.is_staff:
             return User.objects.all()
         return User.objects.filter(id=self.request.user.id)
 
@@ -53,7 +53,6 @@ class UserCreateView(APIView):
         serializer = CreateUserSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            # Garante que usuários públicos não sejam admin
             user.is_staff = False
             user.is_superuser = False
             user.save()
@@ -72,13 +71,12 @@ class UserUpdateView(UpdateAPIView):
 
 
     def get_queryset(self):
-        if self.request.user.is_staff:  # Admin pode atualizar qualquer usuário
+        if self.request.user.is_staff:
             return User.objects.all()
         return User.objects.filter(id=self.request.user.id)
 
 
     def perform_update(self, serializer):
-        # Proíbe alteração de campos sensíveis por usuários comuns
         if not self.request.user.is_staff:
             serializer.save(is_staff=False, is_superuser=False)
         else:
@@ -95,7 +93,7 @@ class UserDeleteView(DestroyAPIView):
 
 
     def perform_destroy(self, instance):
-        if instance == self.request.user:  # Impede exclusão de si mesmo
+        if instance == self.request.user:
             raise PermissionDenied("Você não pode excluir a si mesmo.")
         super().perform_destroy(instance)
 

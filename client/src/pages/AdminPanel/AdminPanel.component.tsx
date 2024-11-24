@@ -50,7 +50,7 @@ const AdminPanel: React.FC = () => {
 
   const handleExport = (format: string) => {
     const url = `http://localhost:8000/api/menu/reports/export-${format}/`;
-    window.open(url, '_blank'); // Abre o link em uma nova aba
+    window.open(url, '_blank');
   };
 
   return (
