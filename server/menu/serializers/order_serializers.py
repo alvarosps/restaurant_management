@@ -10,11 +10,11 @@ class OrderSerializer(serializers.ModelSerializer):
         }
 
 class UserOrderHistorySerializer(serializers.ModelSerializer):
-    menu_item__name = serializers.CharField(source='menu_item.name')
+    menu_item_name = serializers.CharField(source='menu_item.name')
 
     class Meta:
         model = Order
-        fields = ['menu_item__name', 'quantity', 'status', 'created_at']
+        fields = ['menu_item_name', 'quantity', 'status', 'created_at', 'table_number']
         
 class TableOrderSerializer(serializers.ModelSerializer):
     menu_item_name = serializers.CharField(source='menu_item.name', read_only=True)

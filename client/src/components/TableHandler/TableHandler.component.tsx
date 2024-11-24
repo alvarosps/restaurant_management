@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { TABLE_NUMBER } from '~/constants';
 import Modal from '~components/Modal';
 
 const TableHandler: React.FC = () => {
@@ -10,10 +11,10 @@ const TableHandler: React.FC = () => {
   useEffect(() => {
     const table = searchParams.get('table');
     if (table) {
-      localStorage.setItem('tableNumber', table);
+      localStorage.setItem(TABLE_NUMBER, table);
       setTableNumber(table);
     } else {
-      const storedTable = localStorage.getItem('tableNumber');
+      const storedTable = localStorage.getItem(TABLE_NUMBER);
       if (!storedTable) {
         setModalVisible(true);
       } else {
@@ -23,7 +24,7 @@ const TableHandler: React.FC = () => {
   }, [searchParams]);
 
   const handleTableSubmit = (table: string) => {
-    localStorage.setItem('tableNumber', table);
+    localStorage.setItem(TABLE_NUMBER, table);
     setTableNumber(table);
     setModalVisible(false);
   };

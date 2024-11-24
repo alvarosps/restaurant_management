@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
-import api from '~services/api';
 import { useNavigate } from 'react-router-dom';
 import Modal from '~components/Modal';
+import { useAuth } from '~/context/AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [modal, setModal] = useState({ isVisible: false, title: '', message: '' });
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      console.log('handleLogin')
-      const response = await api.post('token/', { email, password });
-      localStorage.setItem('token', response.data.access);
-      localStorage.setItem('refreshToken', response.data.refresh);
+      login(email, password);
       navigate('/');
     } catch (error) {
       console.error('Erro ao fazer login:', error);

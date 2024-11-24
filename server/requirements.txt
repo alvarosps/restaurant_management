@@ -11,3 +11,5 @@ python-decouple==3.8
 drf-yasg==1.21.8
 reportlab==4.2.5
 gunicorn==23.0.0
+pandas==2.2.3
+scikit-learn==1.5.2

@@ -65,7 +65,6 @@ const OrderHistory: React.FC = () => {
       <table className="w-full table-auto bg-white rounded shadow-md overflow-x-auto">
         <thead className="bg-gray-800 text-white">
           <tr>
-            <th className="px-4 py-2">ID</th>
             <th className="px-4 py-2">Item</th>
             <th className="px-4 py-2">Quantidade</th>
             <th className="px-4 py-2">Status</th>
@@ -74,9 +73,8 @@ const OrderHistory: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order) => (
-            <tr key={order.id} className="border-t">
-              <td className="px-4 py-2">{order.id}</td>
+          {orders.map((order, i) => (
+            <tr key={`${order.id}-${i}`} className="border-t">
               <td className="px-4 py-2">{order.menu_item_name}</td>
               <td className="px-4 py-2">{order.quantity}</td>
               <td className="px-4 py-2">{order.status}</td>

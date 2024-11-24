@@ -4,6 +4,7 @@ from menu.views.order_views import OrderListCreateView, CancelOrderView, UserOrd
 from menu.views.report_views import ReportView, ReportAnalysisView, ExportReportCSVView, ExportReportPDFView
 from menu.views.payment_views import CreatePaymentSessionView, ProcessPaymentView
 from menu.views.stock_views import UpdateStockView
+from menu.views.recommendation_views import RecommendationView
 
 urlpatterns = [
     path('items/', MenuItemListCreateView.as_view(), name='menu-items'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('orders/<int:pk>/advance-status/', AdvanceOrderStatusView.as_view(), name='advance-order-status'),
     path('reports/export-csv/', ExportReportCSVView.as_view(), name='export-report-csv'),
     path('reports/export-pdf/', ExportReportPDFView.as_view(), name='export-report-pdf'),
+    path('recommendations/', RecommendationView.as_view(), name='recommendations'),
 ]

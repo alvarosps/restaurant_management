@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react';
 import api from '~services/api';
 import { Order } from '~/types';
 import Modal from '~components/Modal';
+import { TABLE_NUMBER } from '~/constants';
 
 const MyOrders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [modal, setModal] = useState({ isVisible: false, title: '', message: '' });
-  const tableNumber = localStorage.getItem('tableNumber');
-  
-  const token = localStorage.getItem('token');
+  const tableNumber = localStorage.getItem(TABLE_NUMBER);
 
   const fetchOrders = async () => {
     try {
-      const endpoint = token ? 'menu/orders/my-orders/' : `menu/orders/table/${tableNumber}/`;
+      const endpoint = `menu/orders/table/${tableNumber}/`;
       const response = await api.get<Order[]>(endpoint);
       setOrders(response.data);
 
@@ -52,7 +51,7 @@ const MyOrders: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">Meus Pedidos: {tableNumber}</h1>
+          <h1 className="text-2xl font-bold mb-4">Meus Pedidos: Mesa {tableNumber}</h1>
           <div className="overflow x-auto">
             <table className="w-full table-auto bg-white rounded shadow-md overflow-x-auto">
                 <thead className="bg-gray-800 text-white">

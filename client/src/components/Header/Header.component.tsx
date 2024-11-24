@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { ACCESS_TOKEN, REFRESH_TOKEN, TABLE_NUMBER } from '~/constants';
 import Modal from '~components/Modal';
 import api from '~services/api';
 
 const Header: React.FC = () => {
-  const token = localStorage.getItem('token');
-  const storedTableNumber = localStorage.getItem('tableNumber');
+  const token = localStorage.getItem(ACCESS_TOKEN);
+  const storedTableNumber = localStorage.getItem(TABLE_NUMBER);
   const [tableNumber, setTableNumber] = useState(storedTableNumber);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTableNumber, setNewTableNumber] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false); // State to track admin status
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Fetch user role (admin or normal user)
-  React.useEffect(() => {
+  useEffect(() => {
     if (token) {
       api.get('users/me/').then((response) => {
         setIsAdmin(response.data.is_admin);
@@ -23,8 +24,8 @@ const Header: React.FC = () => {
   }, [token]);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem(ACCESS_TOKEN);
+    localStorage.removeItem(REFRESH_TOKEN);
     navigate('/login');
   };
 
@@ -37,7 +38,7 @@ const Header: React.FC = () => {
   };
 
   const confirmTableChange = async () => {
-    localStorage.setItem('tableNumber', newTableNumber);
+    localStorage.setItem(TABLE_NUMBER, newTableNumber);
     setTableNumber(newTableNumber);
     setIsModalVisible(false);
 

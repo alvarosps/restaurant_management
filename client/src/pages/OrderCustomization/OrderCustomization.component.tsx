@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '~services/api';
 import { MenuItem } from '~/types';
 import Modal from '~components/Modal';
+import { ACCESS_TOKEN, TABLE_NUMBER } from '~/constants';
 
 interface OrderCustomizationModalProps {
     isVisible: boolean,
@@ -30,8 +31,8 @@ const OrderCustomization: React.FC = () => {
     confirmMessage: undefined,
   });
 
-  const tableNumber = localStorage.getItem('tableNumber');
-  const token = localStorage.getItem('token');
+  const tableNumber = localStorage.getItem(TABLE_NUMBER);
+  const token = localStorage.getItem(ACCESS_TOKEN);
 
   useEffect(() => {
     const fetchMenuItem = async () => {

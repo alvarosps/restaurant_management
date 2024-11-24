@@ -1,8 +1,8 @@
 import axios from 'axios';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '~/constants';
 
 // Verifica qual é o ambiente atual
 const CURRENT_ENV = import.meta.env.VITE_CURRENT_ENV || 'local';
-console.log('CURENT_ENV: ', CURRENT_ENV)
 
 // Define a baseURL dependendo do ambiente
 const baseURL =
@@ -17,7 +17,7 @@ const api = axios.create({
 
 // Intercepts requests to add the Authorization token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem(ACCESS_TOKEN);
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -32,21 +32,21 @@ api.interceptors.response.use(
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      localStorage.getItem('refreshToken')
+      localStorage.getItem(REFRESH_TOKEN)
     ) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN);
         const response = await axios.post('http://localhost:8000/api/token/refresh/', {
           refresh: refreshToken,
         });
-        localStorage.setItem('token', response.data.access);
+        localStorage.setItem(ACCESS_TOKEN, response.data.access);
         originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
         return api(originalRequest);
       } catch (refreshError) {
         console.error('Error refreshing token:', refreshError);
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
       }
     }
     return Promise.reject(error);
