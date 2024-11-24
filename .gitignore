@@ -117,8 +117,8 @@ client/node_modules/
 bower_components/
 
 # Django migrations
-server/**/migrations/
-!server/**/migrations/__init__.py
+# server/**/migrations/
+# !server/**/migrations/__init__.py
 
 # Python eggs and builds
 *.egg-info/
