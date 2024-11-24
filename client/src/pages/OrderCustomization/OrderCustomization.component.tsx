@@ -4,17 +4,30 @@ import api from '~services/api';
 import { MenuItem } from '~/types';
 import Modal from '~components/Modal';
 
+interface OrderCustomizationModalProps {
+    isVisible: boolean,
+    title: string,
+    message: string,
+    action: null | (() => void),
+    showContinueWithoutLogin: boolean,
+    onClose: null | (() => void),
+    confirmMessage: undefined | string,
+};
+
 const OrderCustomization: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [menuItem, setMenuItem] = useState<MenuItem | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [notes, setNotes] = useState<string>('');
-  const [modal, setModal] = useState({
+  const [modal, setModal] = useState<OrderCustomizationModalProps>({
     isVisible: false,
     title: '',
     message: '',
     action: null as (() => void) | null,
+    showContinueWithoutLogin: false,
+    onClose: null as (() => void) | null,
+    confirmMessage: undefined,
   });
 
   const tableNumber = localStorage.getItem('tableNumber');
@@ -34,17 +47,7 @@ const OrderCustomization: React.FC = () => {
     fetchMenuItem();
   }, [id, navigate]);
 
-  const handleOrder = async () => {
-    if (!token && tableNumber) {
-      setModal({
-        isVisible: true,
-        title: 'Login Opcional',
-        message: 'Deseja fazer login para associar o pedido ao seu perfil?',
-        action: handleOptionalLogin,
-      });
-      return;
-    }
-
+  const createOrder = async () => {
     try {
       await api.post('menu/orders/', {
         menu_item: menuItem?.id,
@@ -52,14 +55,66 @@ const OrderCustomization: React.FC = () => {
         notes,
         table_number: tableNumber,
       });
-      setModal({ isVisible: true, title: 'Sucesso', message: 'Pedido realizado com sucesso!', action: null });
+      setModal({
+        isVisible: true,
+        title: 'Sucesso',
+        message: `Pedido realizado com sucesso para a mesa ${tableNumber}!`,
+        action: null,
+        showContinueWithoutLogin: false,
+        onClose: () => {
+          setModal((prev) => ({ ...prev, isVisible: false }));
+          navigate('/');
+        },
+        confirmMessage: undefined,
+      });
     } catch (error) {
-      setModal({ isVisible: true, title: 'Erro', message: 'Erro ao realizar o pedido.', action: null });
+      setModal({
+        isVisible: true,
+        title: 'Erro',
+        message: 'Erro ao realizar o pedido.',
+        action: null,
+        showContinueWithoutLogin: false,
+        onClose: () => {
+          setModal((prev) => ({ ...prev, isVisible: false }));
+        },
+        confirmMessage: undefined,
+      });
     }
-  };
+  }
 
   const handleOptionalLogin = () => {
+    setModal((prev) => ({ ...prev, isVisible: false }));
     navigate('/login');
+  };
+
+  const handleOrder = async () => {
+    if (!tableNumber) {
+      setModal({
+        isVisible: true,
+        title: 'Erro',
+        message: 'Número da mesa não encontrado. Configure antes de fazer o pedido.',
+        action: null,
+        showContinueWithoutLogin: false,
+        onClose: null,
+        confirmMessage: undefined,
+      });
+      return;
+    }
+
+    if (!token) {
+      setModal({
+        isVisible: true,
+        title: 'Login Opcional',
+        message: `Mesa: ${tableNumber}\n\nDeseja fazer login para associar o pedido ao seu perfil?`,
+        action: handleOptionalLogin,
+        showContinueWithoutLogin: true,
+        onClose: null,
+        confirmMessage: 'Fazer Login',
+      });
+      return;
+    }
+
+    createOrder();
   };
 
   if (!menuItem) return <p>Carregando...</p>;
@@ -106,22 +161,29 @@ const OrderCustomization: React.FC = () => {
         title={modal.title}
         message={modal.message}
         isVisible={modal.isVisible}
-        onClose={() => setModal({ ...modal, isVisible: false })}
+        onClose={() => modal.onClose ? modal.onClose() : setModal((prev) => ({ ...prev, isVisible: false }))}
       >
         {modal.action && (
           <button
-            onClick={modal.action}
+            onClick={() => {
+              modal.action?.();
+              setModal((prev) => ({ ...prev, isVisible: false }));
+            }}
             className="w-full bg-green-500 text-white px-4 py-2 rounded mt-2"
           >
-            Fazer Login
+            {modal.confirmMessage ? modal.confirmMessage : 'Confirmar'}
           </button>
         )}
-        <button
-          onClick={() => setModal({ ...modal, isVisible: false })}
-          className="w-full bg-gray-300 text-black px-4 py-2 rounded mt-2"
-        >
-          Continuar sem Login
-        </button>
+        {modal.showContinueWithoutLogin && modal.action && (
+          <button
+            onClick={() => {
+              createOrder();
+            }}
+            className="w-full bg-gray-300 text-black px-4 py-2 rounded mt-2"
+          >
+            Continuar sem Login
+          </button>
+        )}
       </Modal>
     </div>
   );

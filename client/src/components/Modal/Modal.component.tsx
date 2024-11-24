@@ -3,21 +3,27 @@ interface ModalProps {
     message: string;
     isVisible: boolean;
     onClose: () => void;
-    children?: React.ReactNode; // Permite receber filhos
+    children?: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({ title, message, isVisible, onClose, children }) => {
+const Modal: React.FC<{
+  title: string;
+  message: string;
+  isVisible: boolean;
+  onClose: () => void;
+  children?: React.ReactNode;
+}> = ({ title, message, isVisible, onClose, children }: ModalProps) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-md p-4 max-w-sm w-full">
-        <h2 className="text-lg font-bold mb-2">{title}</h2>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white text-black w-11/12 max-w-md p-6 rounded-lg shadow-lg">
+        <h2 className="text-lg font-bold mb-4">{title}</h2>
         <p className="mb-4">{message}</p>
         {children}
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded w-full mt-2"
           onClick={onClose}
+          className="mt-4 w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
         >
           Fechar
         </button>
@@ -25,5 +31,6 @@ const Modal: React.FC<ModalProps> = ({ title, message, isVisible, onClose, child
     </div>
   );
 };
+
 
 export default Modal;

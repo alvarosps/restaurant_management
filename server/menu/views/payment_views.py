@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from menu.serializers.payment_serializers import PaymentRequestSerializer
+from menu.models.order import Order
 
 class CreatePaymentSessionView(APIView):
     def post(self, request):
@@ -32,3 +33,24 @@ class CreatePaymentSessionView(APIView):
                 return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         # Retorna erros de validação se houver
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ProcessPaymentView(APIView):
+    def post(self, request):
+        try:
+            table_number = request.data.get('table_number')
+            if not table_number:
+                return Response({'error': 'Table number is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Filtrar pedidos pendentes da mesa
+            orders = Order.objects.filter(table_number=table_number, status='Pending')
+            if not orders.exists():
+                return Response({'error': 'No pending orders for this table'}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Atualizar o status dos pedidos para "Paid"
+            for order in orders:
+                order.status = 'Paid'
+                order.save()
+
+            return Response({'status': 'Payment successful', 'orders': orders.count()}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

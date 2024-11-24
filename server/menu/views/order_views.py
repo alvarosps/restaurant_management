@@ -4,13 +4,41 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework import status, serializers
 from menu.models.order import Order
 from menu.models.order_audit import OrderAudit
-from menu.serializers.order_serializers import OrderSerializer, UserOrderHistorySerializer
+from menu.serializers.order_serializers import OrderSerializer, UserOrderHistorySerializer, TableOrderSerializer
 from menu.metrics import cancel_counter
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+class AdvanceOrderStatusView(APIView):
+    """
+    API para avançar o status de um pedido
+    """
+
+    def patch(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+            if order.status == "Pending":
+                order.status = "In Progress"
+            elif order.status == "In Progress":
+                order.status = "Complete"
+            else:
+                raise ValidationError("O pedido já está no estado final.")
+            
+            order.save()
+
+            OrderAudit.objects.create(order=order, status=order.status)
+
+            return Response({"message": "Estado do pedido atualizado com sucesso.", "status": order.status}, status=status.HTTP_200_OK)
+        except Order.DoesNotExist:
+            return Response({"error": "Pedido não encontrado."}, status=status.HTTP_404_NOT_FOUND)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class OrderListCreateView(ListCreateAPIView):
     queryset = Order.objects.all()
@@ -75,3 +103,10 @@ class RefundOrderView(APIView):
         except stripe.error.InvalidRequestError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class TableOrderView(APIView):
+    def get(self, request, table_number):
+        orders = Order.objects.filter(table_number=table_number).order_by('-created_at')
+        if not orders.exists():
+            return Response({'message': 'No orders found for this table number'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TableOrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

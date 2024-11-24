@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Modal from '~components/Modal';
+import api from '~services/api';
 
 const Header: React.FC = () => {
   const token = localStorage.getItem('token');
-  const tableNumber = localStorage.getItem('tableNumber');
+  const storedTableNumber = localStorage.getItem('tableNumber');
+  const [tableNumber, setTableNumber] = useState(storedTableNumber);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newTableNumber, setNewTableNumber] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false); // State to track admin status
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Fetch user role (admin or normal user)
+  React.useEffect(() => {
+    if (token) {
+      api.get('users/me/').then((response) => {
+        setIsAdmin(response.data.is_admin);
+      });
+    }
+  }, [token]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -15,6 +30,25 @@ const Header: React.FC = () => {
 
   const showBackButton =
     location.pathname !== '/' && location.pathname !== '/login';
+
+  const handleTableClick = () => {
+    setNewTableNumber(tableNumber || '');
+    setIsModalVisible(true);
+  };
+
+  const confirmTableChange = async () => {
+    localStorage.setItem('tableNumber', newTableNumber);
+    setTableNumber(newTableNumber);
+    setIsModalVisible(false);
+
+    if (token) {
+      try {
+        await api.patch('users/me/', { table_number: newTableNumber });
+      } catch (error) {
+        console.error('Erro ao atualizar o número da mesa:', error);
+      }
+    }
+  };
 
   return (
     <header className="bg-blue-600 text-white py-3 px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center">
@@ -33,34 +67,72 @@ const Header: React.FC = () => {
       </div>
       <nav className="flex space-x-2 items-center">
         {tableNumber && (
-            <div className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium">
+          <div
+            onClick={handleTableClick}
+            className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium cursor-pointer hover:bg-gray-200"
+            title="Clique para editar o número da mesa"
+          >
             Mesa {tableNumber}
-            </div>
+          </div>
         )}
         <Link to="/" className="hover:underline">
-            Cardápio
+          Cardápio
         </Link>
-        <Link to="/order-history" className="hover:underline">
-            Histórico
-        </Link>
-        {token ? (
-            <>
-            <Link to="/admin" className="hover:underline">
-                Admin Panel
-            </Link>
-            <Link to="/user-create" className="hover:underline">
-                Criar Usuário
-            </Link>
-            <button onClick={handleLogout} className="hover:underline">
-                Logout
-            </button>
-            </>
+        {isAdmin ? (
+          <Link to="/order-history" className="hover:underline">
+            Histórico de Pedidos
+          </Link>
         ) : (
-            <Link to="/login" className="hover:underline">
-            Login
-            </Link>
+          <Link to="/my-orders" className="hover:underline">
+            Meus Pedidos
+          </Link>
         )}
-        </nav>
+        {token ? (
+          <>
+            {isAdmin && (
+              <Link to="/admin" className="hover:underline">
+                Admin Panel
+              </Link>
+            )}
+            <button onClick={handleLogout} className="hover:underline">
+              Logout
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="hover:underline">
+            Login
+          </Link>
+        )}
+      </nav>
+
+      {isModalVisible && (
+        <Modal
+          title="Editar número da mesa"
+          message="Tem certeza de que deseja alterar o número da mesa?"
+          isVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+        >
+          <input
+            type="number"
+            value={newTableNumber}
+            onChange={(e) => setNewTableNumber(e.target.value)}
+            className="w-full px-3 py-2 border rounded mt-2"
+            placeholder="Digite o novo número da mesa"
+          />
+          <button
+            onClick={confirmTableChange}
+            className="w-full bg-green-500 text-white px-4 py-2 rounded mt-4"
+          >
+            Confirmar
+          </button>
+          <button
+            onClick={() => setIsModalVisible(false)}
+            className="w-full bg-gray-300 text-black px-4 py-2 rounded mt-2"
+          >
+            Cancelar
+          </button>
+        </Modal>
+      )}
     </header>
   );
 };

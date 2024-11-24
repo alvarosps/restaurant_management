@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import InputMask from 'react-input-mask';
 import { userAPI } from '~services/api';
 import Modal from '~components/Modal';
+import { useNavigate } from 'react-router-dom';
 
 const UserCreate: React.FC = () => {
+  const navigate = useNavigate();
+  const [createdUserSuccess, setCreatedUserSuccess] = useState(false);
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -24,8 +29,14 @@ const UserCreate: React.FC = () => {
     try {
       await userAPI.createUser(formData);
       setModal({ isVisible: true, title: 'Sucesso', message: 'Usuário criado com sucesso!' });
+      setCreatedUserSuccess(true);
     } catch (error) {
-      setModal({ isVisible: true, title: 'Erro', message: 'Erro ao criar usuário.' });
+      const errorMessages = [];
+      const errors = (error as any).response.data;
+      for (const key in errors) {
+        errorMessages.push(errors[key]);
+      }
+      setModal({ isVisible: true, title: 'Erro', message: 'Erro ao criar usuário: ' + errorMessages.join('\n') });
     }
   };
 
@@ -65,22 +76,36 @@ const UserCreate: React.FC = () => {
           onChange={handleInputChange}
           className="w-full px-3 py-2 border rounded"
         />
-        <input
-          type="text"
-          name="cpf"
-          placeholder="CPF"
+        {/* Input para CPF com máscara */}
+        <InputMask
+          mask="999.999.999-99"
           value={formData.cpf}
-          onChange={handleInputChange}
-          className="w-full px-3 py-2 border rounded"
-        />
-        <input
-          type="text"
-          name="telephone"
-          placeholder="Telefone"
+          onChange={(e) => handleInputChange(e)}
+        >
+          {() => (
+            <input
+              type="text"
+              name="cpf"
+              placeholder="CPF"
+              className="w-full px-3 py-2 border rounded"
+            />
+          )}
+        </InputMask>
+        {/* Input para telefone com máscara */}
+        <InputMask
+          mask="(99) 99999-9999"
           value={formData.telephone}
-          onChange={handleInputChange}
-          className="w-full px-3 py-2 border rounded"
-        />
+          onChange={(e) => handleInputChange(e)}
+        >
+          {() => (
+            <input
+              type="text"
+              name="telephone"
+              placeholder="Telefone"
+              className="w-full px-3 py-2 border rounded"
+            />
+          )}
+        </InputMask>
         <input
           type="number"
           name="table_number"
@@ -100,7 +125,10 @@ const UserCreate: React.FC = () => {
         title={modal.title}
         message={modal.message}
         isVisible={modal.isVisible}
-        onClose={() => setModal({ ...modal, isVisible: false })}
+        onClose={() => {
+          setModal({ ...modal, isVisible: false });
+          if(createdUserSuccess) navigate('/login')
+        }}
       />
     </div>
   );

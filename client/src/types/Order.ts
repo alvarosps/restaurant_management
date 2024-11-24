@@ -1,7 +1,9 @@
 export interface Order {
     id: number;
-    menu_item__name: string; // Nome do item do menu retornado pelo backend
+    menu_item_name: string;
     quantity: number;
     status: string;
-    created_at: string; // Data do pedido em formato de string
+    created_at: string;
+    table_number: number;
+    menu_item_price: number;
 }
