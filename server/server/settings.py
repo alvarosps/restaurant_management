@@ -68,9 +68,11 @@ MIDDLEWARE = [
 ]
 
 
+FRONTEND_URLS = config('FRONTEND_URL', default='').split(',')
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    config('FRONTEND_URL'),
+    *FRONTEND_URLS,
 ]
 
 REST_FRAMEWORK = {
