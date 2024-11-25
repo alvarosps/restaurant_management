@@ -13,7 +13,6 @@ const Login: React.FC = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      // Use the returned value from the login method
       const isAdmin = await login(email, password);
 
       console.log('isAdmin', isAdmin);

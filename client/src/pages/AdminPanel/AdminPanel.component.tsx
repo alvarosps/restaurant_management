@@ -5,6 +5,8 @@ import Modal from '~components/Modal';
 import BarChart from '~components/BarChart';
 import { translateStatus } from '~/utils';
 
+const CURRENT_ENV = import.meta.env.VITE_CURRENT_ENV || 'local';
+
 const AdminPanel: React.FC = () => {
   const [reportData, setReportData] = useState<ReportItem[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -58,7 +60,11 @@ const AdminPanel: React.FC = () => {
   ]);
 
   const handleExport = (format: string) => {
-    const url = `http://localhost:8000/api/menu/reports/export-${format}/`;
+    const baseURL =
+      CURRENT_ENV === 'prod'
+        ? 'https://restaurant-management-xd6i.onrender.com/api/'
+        : 'http://localhost:8000/api/';
+    const url = `${baseURL}menu/reports/export-${format}/`;
     window.open(url, '_blank');
   };
 

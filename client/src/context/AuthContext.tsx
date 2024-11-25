@@ -69,11 +69,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         setIsAdmin(response.data.is_admin);
       } catch (error) {
         console.error("Error fetching user:", error);
-        logout(); // Call logout to clear invalid session
+        logout();
       }
     };
 
-    fetchUser(); // Call the async function inside the useEffect
+    fetchUser();
   }, []);
 
 
