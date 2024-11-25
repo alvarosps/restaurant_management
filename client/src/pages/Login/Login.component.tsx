@@ -13,8 +13,15 @@ const Login: React.FC = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      login(email, password);
-      navigate('/');
+      // Use the returned value from the login method
+      const isAdmin = await login(email, password);
+
+      console.log('isAdmin', isAdmin);
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       setModal({

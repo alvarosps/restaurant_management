@@ -1,32 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ACCESS_TOKEN, REFRESH_TOKEN, TABLE_NUMBER } from '~/constants';
+import { ACCESS_TOKEN, IS_ADMIN, TABLE_NUMBER } from '~/constants';
+import { useAuth } from '~/context/AuthContext';
 import Modal from '~components/Modal';
 import api from '~services/api';
 
 const Header: React.FC = () => {
   const token = localStorage.getItem(ACCESS_TOKEN);
-  const storedTableNumber = localStorage.getItem(TABLE_NUMBER);
-  const [tableNumber, setTableNumber] = useState(storedTableNumber);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTableNumber, setNewTableNumber] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAuthenticated, logout, isAdmin, tableNumber, setTableNumber, setShowTableModal } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     if (token) {
       api.get('users/me/').then((response) => {
-        setIsAdmin(response.data.is_admin);
+        localStorage.setItem(IS_ADMIN, response.data.is_admin);
       });
     }
   }, [token]);
-
-  const handleLogout = () => {
-    localStorage.removeItem(ACCESS_TOKEN);
-    localStorage.removeItem(REFRESH_TOKEN);
-    navigate('/login');
-  };
 
   const showBackButton =
     location.pathname !== '/' && location.pathname !== '/login';
@@ -75,26 +68,37 @@ const Header: React.FC = () => {
             Mesa {tableNumber}
           </div>
         )}
-        <Link to="/" className="hover:underline">
-          Cardápio
-        </Link>
-        {isAdmin ? (
+        {!tableNumber && !isAdmin && (
+          <button onClick={() => setShowTableModal(true)} className="bg-gray-100 text-blue-600 text-sm px-3 py-1 rounded-full font-medium cursor-pointer hover:bg-gray-200">
+            Clique para escolher a mesa
+          </button>
+        )}
+        {!isAdmin && (
+          <Link to="/" className="hover:underline">
+              Cardápio
+          </Link>
+        )}
+        {isAdmin && (
           <Link to="/order-history" className="hover:underline">
             Histórico de Pedidos
           </Link>
-        ) : (
+        )}
+        {tableNumber && !isAdmin && (
           <Link to="/my-orders" className="hover:underline">
             Meus Pedidos
           </Link>
         )}
-        {token ? (
+        {token || isAuthenticated ? (
           <>
             {isAdmin && (
               <Link to="/admin" className="hover:underline">
                 Admin Panel
               </Link>
             )}
-            <button onClick={handleLogout} className="hover:underline">
+            <button onClick={() => {
+              logout();
+              navigate('/');
+            }} className="hover:underline">
               Logout
             </button>
           </>

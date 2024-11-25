@@ -11,9 +11,9 @@ const Modal = ({ title, message, isVisible, onClose, children }: ModalProps) => 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white text-black w-11/12 max-w-md p-6 rounded-lg shadow-lg">
-        <h2 className="text-lg font-bold mb-4">{title}</h2>
-        {message && <p className="mb-4">{message}</p>}
+      <div className="bg-white text-black w-11/12 sm:w-10/12 max-w-md p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+        <h2 className="text-lg font-bold mb-4 text-center">{title}</h2>
+        {message && <p className="mb-4 text-center">{message}</p>}
         {children}
         <button
           onClick={onClose}
@@ -25,6 +25,5 @@ const Modal = ({ title, message, isVisible, onClose, children }: ModalProps) => 
     </div>
   );
 };
-
 
 export default Modal;

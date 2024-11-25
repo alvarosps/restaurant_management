@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 import api from '~services/api';
 import { ReportItem, MenuItem } from '~/types';
 import Modal from '~components/Modal';
-import Table from '~components/Table';
 import BarChart from '~components/BarChart';
+import { translateStatus } from '~/utils';
 
 const AdminPanel: React.FC = () => {
   const [reportData, setReportData] = useState<ReportItem[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [audits, setAudits] = useState<any[]>([]);
   const [modal, setModal] = useState({ isVisible: false, title: '', message: '' });
+  const [updatedStocks, setUpdatedStocks] = useState<Record<number, number>>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,11 +32,19 @@ const AdminPanel: React.FC = () => {
     fetchData();
   }, []);
 
-  const updateStock = async (itemId: number, stock: number) => {
+  const updateStock = async (itemId: number) => {
+    const newStock = updatedStocks[itemId];
+    if (newStock === undefined) return;
+
     try {
-      await api.patch(`menu/items/${itemId}/update-stock/`, { stock });
+      await api.patch(`menu/items/${itemId}/update-stock/`, { stock: newStock });
       setModal({ isVisible: true, title: 'Sucesso', message: 'Estoque atualizado com sucesso!' });
-      setMenuItems(menuItems.map(item => (item.id === itemId ? { ...item, stock } : item)));
+      setMenuItems(menuItems.map(item => (item.id === itemId ? { ...item, stock: newStock } : item)));
+      setUpdatedStocks((prev) => {
+        const updated = { ...prev };
+        delete updated[itemId];
+        return updated;
+      });
     } catch (error) {
       setModal({ isVisible: true, title: 'Erro', message: `Erro ao atualizar estoque: ${error}.` });
     }
@@ -83,22 +92,64 @@ const AdminPanel: React.FC = () => {
 
       <div className="mb-6">
         <h2 className="text-xl font-bold mb-4">Atualizar Estoque</h2>
-        {menuItems.map(item => (
-          <div key={item.id} className="flex items-center mb-2">
-            <p className="mr-4">{item.name} (Estoque: {item.stock})</p>
-            <input
-              type="number"
-              className="border rounded px-2 py-1"
-              placeholder="Novo estoque"
-              onBlur={(e) => updateStock(item.id, Number(e.target.value))}
-            />
-          </div>
-        ))}
+        <div className="space-y-2">
+          {menuItems.map(item => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between gap-4 bg-gray-100 p-2 rounded shadow-sm"
+            >
+              {/* Item Name */}
+              <p className="flex-1">{item.name} (Estoque: {item.stock})</p>
+
+              {/* Input Field */}
+              <input
+                type="number"
+                className="flex-shrink-0 border rounded px-2 py-1 w-20"
+                placeholder="Novo estoque"
+                value={updatedStocks[item.id] || ''}
+                onChange={(e) =>
+                  setUpdatedStocks((prev) => ({ ...prev, [item.id]: Number(e.target.value) }))
+                }
+              />
+
+              {/* Update Button */}
+              <button
+                onClick={() => updateStock(item.id)}
+                className="flex-shrink-0 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              >
+                Atualizar
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>
         <h2 className="text-xl font-bold mb-4">Auditoria de Pedidos</h2>
-        <Table headers={auditHeaders} rows={auditRows} />
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full bg-white rounded shadow-md">
+            <thead className="bg-blue-500 text-white">
+              <tr>
+                {auditHeaders.map((header) => (
+                  <th key={header} className="px-4 py-2 text-left">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {auditRows.map((row, index) => (
+                <tr key={index} className="border-t">
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex} className="px-4 py-2">
+                      {cellIndex === 1 ? translateStatus(cell) : cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Modal

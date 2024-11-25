@@ -1,42 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { TABLE_NUMBER } from '~/constants';
+import { useAuth } from '~/context/AuthContext';
 import Modal from '~components/Modal';
 
 const TableHandler: React.FC = () => {
   const [searchParams] = useSearchParams();
-  const [_tableNumber, setTableNumber] = useState<string | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [localModalVisible, setLocalModalVisible] = useState(false);
+  const { isAdmin, showTableModal, setShowTableModal, setTableNumber } = useAuth();
 
   useEffect(() => {
     const table = searchParams.get('table');
-    if (table) {
+
+    if (showTableModal && !isAdmin) {
+      setLocalModalVisible(true);
+      setShowTableModal(false);
+    } else if (table) {
       localStorage.setItem(TABLE_NUMBER, table);
       setTableNumber(table);
-    } else {
+    } else if (!isAdmin) {
       const storedTable = localStorage.getItem(TABLE_NUMBER);
       if (!storedTable) {
-        setModalVisible(true);
-      } else {
-        setTableNumber(storedTable);
+        setLocalModalVisible(true);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, showTableModal, isAdmin, setShowTableModal]);
 
   const handleTableSubmit = (table: string) => {
     localStorage.setItem(TABLE_NUMBER, table);
     setTableNumber(table);
-    setModalVisible(false);
+    setLocalModalVisible(false);
+    setShowTableModal(false);
   };
 
   return (
     <>
-      {modalVisible && (
+      {localModalVisible && (
         <Modal
           title="Informe o número da mesa"
           message="Por favor, insira o número da mesa para continuar."
-          isVisible={modalVisible}
-          onClose={() => setModalVisible(false)}
+          isVisible={localModalVisible}
+          onClose={() => setLocalModalVisible(false)}
         >
           <form
             onSubmit={(e) => {

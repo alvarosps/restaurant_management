@@ -11,3 +11,10 @@ h1 {
 p {
     color: #666;
 }
+
+
+.table-auto th,
+.table-auto td {
+  text-align: center;
+  padding: 0.5rem 1rem; /* Matches px-4 and py-2 */
+}
